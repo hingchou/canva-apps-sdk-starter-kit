@@ -16,12 +16,12 @@ export const App = () => { // 2.1 定义App函数组件
 
   // 4. 返回JSX元素
   return ( // 4.1 返回一个JSX元素
-    <div className={styles.scrollContainer}> // 4.2 使用样式文件中的scrollContainer样式
-      <Rows spacing="2u"> // 4.3 创建一个行组件，间距为2单位
-        <Text> // 4.4 创建一个文本组件
-        Type your text and we'll handle the commas, semicolons, and more for a perfect word cloud.
+    <div className={styles.scrollContainer}>
+      <Rows spacing="2u">
+        <Text> 
+        Enter your text, leave the rest to us.
         </Text>
-        <Button variant="primary" onClick={onClick} stretch> // 4.7 创建一个按钮组件，点击事件为onClick函数
+        <Button variant="primary" onClick={onClick} stretch> 
           start
         </Button>
       </Rows>
