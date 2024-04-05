@@ -47,36 +47,55 @@ const onInputChange = (value: string) => { // 修改参数类型为string
     onFileUpload();
   };
 
-  // 3.7 定义一个处理文件上传的函数
-  const onFileUpload = () => {
-    console.log('onFileUpload is called', selectedFile); // 输出调试信息
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log('File is loaded', e.target.result); // 输出调试信息
-      };
-      reader.onerror = (e) => {
-        console.error('File reading error', e); // 输出错误信息
-      };
-      reader.readAsText(selectedFile);
-    } else {
-      console.log('No file is selected'); // 输出调试信息
-    }
-  };
+// 3.7 定义一个处理文件上传的函数
+const onFileUpload = () => {
+  console.log('onFileUpload is called', selectedFile); // 输出调试信息
+  if (selectedFile) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log('File is loaded', e.target.result); // 输出调试信息
 
-  // 4. 返回JSX元素
-  return ( // 4.1 返回一个JSX元素
-    <div className={styles.scrollContainer}>
-      <Rows spacing="2u">
-        <Text> 
-        Enter your text, leave the rest to us.
-        </Text>
-        <TextInput value={inputValue} onChange={onInputChange} stretch /> {/* 4.2 在Text和Button之间添加一个TextInput组件 */}
-        <input type="file" accept=".csv,.xlsx" onChange={onFileChange} /> {/* 4.3 添加一个文件输入元素，只接受.csv和.xlsx文件 */}
-        <Button variant="primary" onClick={onClick} stretch> 
-          start
-        </Button>
-      </Rows>
-    </div>
-  );
+      // 将文件内容按照换行符切割，得到一个数组，数组中的每个元素就是一行文本
+      let lines = (e.target.result as string).split('\n');
+      lines.forEach(line => {
+        // 将每行文本按照`,`，`;`，`、`，`/`这四个字符进行切割，得到一个数组，数组中的每个元素就是一个词组
+        let segments = line.split(/[,，;、/]/);
+        segments.forEach(segment => {
+          // 对于每个词组，我们都调用`addNativeElement`函数将它添加到画板上
+          addNativeElement({
+            type: "TEXT",
+            children: [segment],
+          });
+        });
+      });
+    };
+    reader.onerror = (e) => {
+      console.error('File reading error', e); // 输出错误信息
+    };
+    reader.readAsText(selectedFile);
+  } else {
+    console.log('No file is selected'); // 输出调试信息
+  }
 };
+
+// 4. 返回JSX元素
+return ( // 4.1 返回一个JSX元素
+  <div className={styles.scrollContainer}>
+    <Rows spacing="2u">
+      <Text> 
+      Enter your text, leave the rest to us.
+      </Text>
+      <TextInput value={inputValue} onChange={onInputChange} stretch /> {/* 4.2 在Text和Button之间添加一个TextInput组件 */}
+      <Button variant="primary" onClick={onClick} stretch> 
+        start
+      </Button>
+      <Text> 
+      Upload CSV/Excel to begin.
+      </Text>
+      <input type="file" accept=".csv,.xlsx" onChange={onFileChange} /> {/* 4.3 添加一个文件输入元素，只接受.csv和.xlsx文件 */}
+      <Button variant="primary" onClick={onFileUpload} stretch> 
+        Upload CSV
+      </Button>
+    </Rows>
+  </div>
+);
