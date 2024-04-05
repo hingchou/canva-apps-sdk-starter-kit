@@ -11,41 +11,58 @@ export const App = () => { // 2.1 定义App函数组件
   // 2.3 定义一个状态变量来存储选中的文件
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
-  // 3. 定义点击事件处理函数
-  const onClick = () => { // 3.1 定义onClick函数
+// 3. 定义点击事件处理函数
+const onClick = () => { // 3.1 定义onClick函数
+  console.log('onClick is called'); // 输出调试信息
+  console.log('inputValue', inputValue); // 输出调试信息
+
+  // 使用正则表达式切割文本
+  let segments = inputValue.split(/[,，;、/]/);
+  console.log('segments', segments); // 输出切割后的词组
+
+  segments.forEach(segment => {
     addNativeElement({ // 3.2 在点击事件中添加一个原生元素
       type: "TEXT", // 3.3 元素类型为文本
-      children: [inputValue], // 3.4 元素的内容为输入框的值
+      children: [segment], // 3.4 元素的内容为输入框的值
     });
-  };
+  });
 
-  // 3.5 定义一个处理输入框值改变的函数
-  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
+  console.log('addNativeElement is called'); // 输出调试信息
+};
 
+// 3.5 定义一个处理输入框值改变的函数
+const onInputChange = (value: string) => { // 修改参数类型为string
+  console.log('onInputChange is called', value); // 输出输入值
+
+  // 使用正则表达式切割文本
+  let segments = value.split(/[,，;、/]/);
+  console.log('segments', segments); // 输出切割后的词组
+
+  setInputValue(value); // 直接使用输入值
+};
   // 3.6 定义一个处理文件选择的函数
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('onFileChange is called', event.target.files); // 输出调试信息
     setSelectedFile(event.target.files[0]);
+    onFileUpload();
   };
 
-// 3.7 定义一个处理文件上传的函数
-const onFileUpload = () => {
-  console.log('onFileUpload is called'); // 输出调试信息
-  if (selectedFile) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      console.log('File is loaded'); // 输出调试信息
-      console.log(e.target.result); // 输出文件内容
-    };
-    reader.onerror = (e) => {
-      console.error('File reading error', e); // 输出错误信息
-    };
-    reader.readAsText(selectedFile);
-  } else {
-    console.log('No file is selected'); // 输出调试信息
-  }
-};
+  // 3.7 定义一个处理文件上传的函数
+  const onFileUpload = () => {
+    console.log('onFileUpload is called', selectedFile); // 输出调试信息
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        console.log('File is loaded', e.target.result); // 输出调试信息
+      };
+      reader.onerror = (e) => {
+        console.error('File reading error', e); // 输出错误信息
+      };
+      reader.readAsText(selectedFile);
+    } else {
+      console.log('No file is selected'); // 输出调试信息
+    }
+  };
 
   // 4. 返回JSX元素
   return ( // 4.1 返回一个JSX元素
@@ -56,9 +73,6 @@ const onFileUpload = () => {
         </Text>
         <TextInput value={inputValue} onChange={onInputChange} stretch /> {/* 4.2 在Text和Button之间添加一个TextInput组件 */}
         <input type="file" accept=".csv,.xlsx" onChange={onFileChange} /> {/* 4.3 添加一个文件输入元素，只接受.csv和.xlsx文件 */}
-        <Button variant="primary" onClick={onFileUpload} stretch> 
-          Upload File
-        </Button> {/* 4.4 添加一个按钮，点击时上传文件 */}
         <Button variant="primary" onClick={onClick} stretch> 
           start
         </Button>
