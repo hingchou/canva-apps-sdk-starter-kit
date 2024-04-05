@@ -29,16 +29,23 @@ export const App = () => { // 2.1 定义App函数组件
     setSelectedFile(event.target.files[0]);
   };
 
-  // 3.7 定义一个处理文件上传的函数
-  const onFileUpload = () => {
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log(e.target.result); // 输出文件内容
-      };
-      reader.readAsText(selectedFile);
-    }
-  };
+// 3.7 定义一个处理文件上传的函数
+const onFileUpload = () => {
+  console.log('onFileUpload is called'); // 输出调试信息
+  if (selectedFile) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log('File is loaded'); // 输出调试信息
+      console.log(e.target.result); // 输出文件内容
+    };
+    reader.onerror = (e) => {
+      console.error('File reading error', e); // 输出错误信息
+    };
+    reader.readAsText(selectedFile);
+  } else {
+    console.log('No file is selected'); // 输出调试信息
+  }
+};
 
   // 4. 返回JSX元素
   return ( // 4.1 返回一个JSX元素
